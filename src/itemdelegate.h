@@ -62,7 +62,6 @@ class ItemDelegate : public QStyledItemDelegate
         QWidget *m_parent;
         QString m_css;
         QString m_format;
-        int m_maxsize;
 
         // items drawn using QTextDocument
         mutable QList<QTextDocument*> m_cache;

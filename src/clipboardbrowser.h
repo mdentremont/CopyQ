@@ -51,6 +51,7 @@ class ClipboardBrowser : public QListView
         bool add(const QString &txt, bool ignore_empty = true);
         bool add(QMimeData *item, bool ignore_empty = true);
         bool add(ClipboardItem *item);
+        bool canAdd(const QMimeData &data) const;
         void remove();
         int length() const { return model()->rowCount(); }
         QString itemText(int i = -1) const;
@@ -84,6 +85,7 @@ class ClipboardBrowser : public QListView
         bool m_update;
         QBasicTimer timer_preload;
         int m_to_preload;
+        QRegExp m_ignore;
 
         QMenu *m_menu;
         ConfigurationManager::Commands commands;

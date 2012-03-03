@@ -35,7 +35,6 @@ ClipboardItem::~ClipboardItem()
 
 void ClipboardItem::clear()
 {
-    //m_data->clear();
     delete m_data;
     m_data = new QMimeData;
 }
@@ -139,7 +138,7 @@ void ClipboardItem::setPreferredFormat()
     // default mime type is the first in the list
     m_mimeType = formats.first();
     // try formats
-    foreach(QString format, tryformats) {
+    foreach(const QString &format, tryformats) {
         if( formats.contains(format) ) {
             m_mimeType = format;
             break;
@@ -167,21 +166,25 @@ const QVariant ClipboardItem::toHtml() const
         html.remove("<!--StartFragment-->");
     };
 
-    QStringList formats = m_data->formats();
-    int len = formats.size();
-    /* list MIME types only if it contains type other than text/plain */
-    if (len > 0 && (len != 1 || formats[0] != "text/plain")) {
-        html.append("<div id=\"formats\">");
-        for( int i = 0; i<len; ++i ) {
-            const QString &it = formats[i];
-            if ( it == m_mimeType )
-                html.append(" <span class=\"format current\">");
-            else
-                html.append(" <span class=\"format\">");
-            html.append(it);
-            html.append("</span> ");
+    if (m_parent) {
+        QStringList formats = m_data->formats();
+        int len = formats.size();
+        /* list MIME types only if it contains type other than text/plain */
+        if (len > 0 && (len != 1 || formats[0] != "text/plain")) {
+            const QStringList &tryformats = m_parent->formats();
+            html.append("<div id=\"formats\">");
+            foreach(const QString &format, tryformats) {
+                if (formats.contains(format)) {
+                    if ( format == m_mimeType )
+                        html.append(" <span class=\"format current\">");
+                    else
+                        html.append(" <span class=\"format\">");
+                    html.append(format);
+                    html.append("</span> ");
+                }
+            }
+            html.append("</div>");
         }
-        html.append("</div>");
     }
 
     lst.prepend(html);

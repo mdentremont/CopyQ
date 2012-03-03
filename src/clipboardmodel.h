@@ -48,7 +48,7 @@ public:
     QMimeData *mimeData(int row) const;
     ClipboardItem *at(int row) const;
 
-    // editting
+    // editing
     Qt::ItemFlags flags(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value,
                   int role = Qt::EditRole);
@@ -64,6 +64,13 @@ public:
     void setMaxItems(int max);
 
     bool move(int pos, int newpos);
+
+    /**
+    @fn  moveItems
+    @arg list items to move
+    @arg key move items in given direction (Qt::Key_Down, Qt::Key_Up, Qt::Key_End, Qt::Key_Home)
+    @return true if some item was moved to the top (item to clipboard), otherwise false
+    */
     bool moveItems(QModelIndexList list, int key);
 
     // search

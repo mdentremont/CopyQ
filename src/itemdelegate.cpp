@@ -169,7 +169,7 @@ QTextDocument *ItemDelegate::cache(const QModelIndex &index, QSize *size) const
 
     doc = m_cache[n];
     if (!doc) {
-        m_cache[n] = doc = new QTextDocument();
+        doc = m_cache[n] = new QTextDocument();
         doc->setDefaultStyleSheet(m_css);
         doc->setUndoRedoEnabled(false);
 

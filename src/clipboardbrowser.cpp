@@ -479,6 +479,12 @@ bool ClipboardBrowser::add(ClipboardItem *item)
     return true;
 }
 
+bool ClipboardBrowser::canAdd(const QMimeData &data) const
+{
+    return m_ignore.isEmpty() || !data.hasText() ||
+            data.text().indexOf(m_ignore) == -1;
+}
+
 void ClipboardBrowser::loadSettings()
 {
     ConfigurationManager *cm = ConfigurationManager::instance();
@@ -492,6 +498,7 @@ void ClipboardBrowser::loadSettings()
     m_maxitems = cm->value("maxitems").toInt();
     m->setMaxItems(m_maxitems);
     m->setFormats( cm->value("priority").toString() );
+    m_ignore.setPattern( cm->value("ignore").toString() );
 
     // commands
     commands = cm->commands();

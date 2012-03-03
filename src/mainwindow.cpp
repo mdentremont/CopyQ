@@ -87,18 +87,17 @@ MainWindow::MainWindow(QWidget *parent)
 
 void MainWindow::exit()
 {
-    int answer;
     if ( m_confirmExit ) {
-        answer = QMessageBox::question(
+        int answer = QMessageBox::question(
                     this,
                     tr("Exit?"),
                     tr("Do you want to <strong>exit</strong> CopyQ?"),
                     QMessageBox::Yes | QMessageBox::No,
                     QMessageBox::Yes);
-    }
-
-    if ( !m_confirmExit || answer == QMessageBox::Yes) {
-        close();
+        if (answer == QMessageBox::Yes){
+            QApplication::exit();
+        }
+    } else {
         QApplication::exit();
     }
 }

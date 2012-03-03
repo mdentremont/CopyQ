@@ -210,9 +210,11 @@ void ClipboardServer::readyRead()
         QMimeData *data = item.data();
         ClipboardBrowser *c = m_wnd->browser(0);
 
-        c->setAutoUpdate(false);
-        c->add( cloneData(*data) );
-        c->setAutoUpdate(true);
+        if ( c->canAdd(*data) ) {
+            c->setAutoUpdate(false);
+            c->add( cloneData(*data) );
+            c->setAutoUpdate(true);
+        }
     }
 }
 

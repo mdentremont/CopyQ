@@ -13,7 +13,7 @@
 #endif
 
 struct _Option {
-    _Option() : m_obj(NULL) {}
+    _Option() : m_property_name(NULL), m_obj(NULL) {}
     _Option(const QVariant &default_value, const char *property_name = NULL, QObject *obj = NULL) :
         m_default_value(default_value), m_property_name(property_name), m_obj(obj)
     {
@@ -73,16 +73,15 @@ ConfigurationManager::ConfigurationManager(QWidget *parent) :
                        QCoreApplication::applicationName());
 
     /* options */
-    m_options.insert( "formats",
-                      Option("text/plain text/html image/bmp image/x-inkscape-svg-compressed",
-                             "text", ui->lineEditFormats) );
     m_options.insert( "maxitems",
                       Option(200, "value", ui->spinBoxItems) );
     m_options.insert( "tray_items",
                       Option(5, "value", ui->spinBoxTrayItems) );
+    m_options.insert( "ignore",
+                      Option("^\\s*$", "text", ui->lineEditIgnore) );
     m_options.insert( "priority",
-                      Option("image/bmp image/x-inkscape-svg-compressed text/plain text/html",
-                             "text", ui->lineEditPriority) );
+                      Option("image/bmp\nimage/x-inkscape-svg-compressed\ntext/plain\ntext/html",
+                             "plainText", ui->textEditFormats) );
     // TODO: get default editor from environment variable EDITOR
     m_options.insert( "editor",
                       Option(DEFAULT_EDITOR, "text", ui->lineEditEditor) );

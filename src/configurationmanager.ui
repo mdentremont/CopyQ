@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
-    <height>434</height>
+    <width>535</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,28 +30,7 @@
         </attribute>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="1" column="0">
-          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QLabel" name="label_3">
-               <property name="text">
-                <string>Save &amp;formats:</string>
-               </property>
-               <property name="buddy">
-                <cstring>lineEditFormats</cstring>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditFormats">
-               <property name="text">
-                <string>text/plain text/html image/bmp image/x-inkscape-svg-compressed</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
+          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
            <item>
             <widget class="QGroupBox" name="groupBox">
              <property name="sizePolicy">
@@ -197,27 +176,6 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
-             <item>
-              <widget class="QLabel" name="label_5">
-               <property name="text">
-                <string>&amp;Format display priority:</string>
-               </property>
-               <property name="buddy">
-                <cstring>lineEditPriority</cstring>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="lineEditPriority">
-               <property name="text">
-                <string>image/bmp image/x-inkscape-svg-compressed text/plain text/html</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_8">
              <item>
               <widget class="QLabel" name="label_6">
@@ -239,17 +197,58 @@
             </layout>
            </item>
            <item>
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
+             <property name="bottomMargin">
+              <number>0</number>
              </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
+             <item>
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>&amp;Ignore clipboard items text that matches following regular expression:</string>
+               </property>
+               <property name="buddy">
+                <cstring>lineEditIgnore</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEditIgnore">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ignore items containing only spaces: &lt;span style=&quot; font-weight:600;&quot;&gt;^\s*$&lt;/span&gt;&lt;/p&gt;&lt;p&gt;ignore items containing only single character: &lt;span style=&quot; font-weight:600;&quot;&gt;^.$&lt;/span&gt;&lt;/p&gt;&lt;p&gt;ignore items matching previous two rules: &lt;span style=&quot; font-weight:600;&quot;&gt;^(\s*|.)$&lt;/span&gt;&lt;/p&gt;&lt;p&gt;ignore items containing &lt;span style=&quot; font-style:italic;&quot;&gt;secret&lt;/span&gt;: &lt;span style=&quot; font-weight:600;&quot;&gt;secret&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_13">
+             <property name="bottomMargin">
+              <number>0</number>
              </property>
-            </spacer>
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Allowed item &amp;formats (MIME types; in display order):</string>
+               </property>
+               <property name="buddy">
+                <cstring>textEditFormats</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPlainTextEdit" name="textEditFormats">
+               <property name="tabChangesFocus">
+                <bool>true</bool>
+               </property>
+               <property name="plainText">
+                <string>image/x-inkscape-svg-compressed
+image/bmp
+text/html
+text/plain</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>
@@ -652,21 +651,23 @@ QListView::item:hover {
  <tabstops>
   <tabstop>buttonBox</tabstop>
   <tabstop>tabWidget</tabstop>
-  <tabstop>lineEditFormats</tabstop>
+  <tabstop>checkBoxClip</tabstop>
   <tabstop>checkBoxCopyClip</tabstop>
+  <tabstop>checkBoxSel</tabstop>
   <tabstop>checkBoxCopySel</tabstop>
+  <tabstop>checkBoxConfirmExit</tabstop>
   <tabstop>spinBoxItems</tabstop>
   <tabstop>spinBoxTrayItems</tabstop>
-  <tabstop>lineEditPriority</tabstop>
   <tabstop>lineEditEditor</tabstop>
-  <tabstop>checkBoxClip</tabstop>
-  <tabstop>checkBoxSel</tabstop>
-  <tabstop>checkBoxConfirmExit</tabstop>
+  <tabstop>lineEditIgnore</tabstop>
+  <tabstop>textEditFormats</tabstop>
   <tabstop>tableCommands</tabstop>
   <tabstop>pushButtoAdd</tabstop>
   <tabstop>pushButtonRemove</tabstop>
   <tabstop>pushButtonUp</tabstop>
   <tabstop>pushButtonDown</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_2</tabstop>
   <tabstop>plainTextEdit_html</tabstop>
   <tabstop>plainTextEdit_css</tabstop>
  </tabstops>

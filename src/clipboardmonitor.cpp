@@ -26,7 +26,7 @@ ClipboardMonitor::ClipboardMonitor(int &argc, char **argv) :
     }
 
     ConfigurationManager *cm = ConfigurationManager::instance();
-    setFormats( cm->value("formats").toString() );
+    setFormats( cm->value("priority").toString() );
     setCheckClipboard( cm->value("check_clipboard").toBool() );
 
 #ifdef Q_WS_X11
@@ -63,7 +63,7 @@ ClipboardMonitor::~ClipboardMonitor()
 
 void ClipboardMonitor::setFormats(const QString &list)
 {
-    m_formats = list.split( QRegExp("[;, ]+") );
+    m_formats = list.split( QRegExp("[;,\\s]+") );
 }
 
 uint ClipboardMonitor::hash(const QMimeData &data)

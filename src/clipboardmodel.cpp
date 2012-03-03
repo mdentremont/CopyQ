@@ -55,17 +55,13 @@ QString escape(const QString &str)
 }
 
 ClipboardModel::ClipboardModel(QObject *parent) :
-        QAbstractListModel(parent)
+    QAbstractListModel(parent), m_max(200)
 {
-    m_formats << QString("image/x-inkscape-svg-compressed")
-              << QString("image/bmp")
-              << QString("text/html")
-              << QString("text/plain");
 }
 
 void ClipboardModel::setFormats(const QString &list)
 {
-    m_formats = list.split( QRegExp("[;, ]+") );
+    m_formats = list.split( QRegExp("[;,\\s]+") );
 }
 
 int ClipboardModel::rowCount(const QModelIndex&) const
@@ -175,9 +171,11 @@ bool ClipboardModel::setData(const QModelIndex &index, QMimeData *value)
 bool ClipboardModel::append(ClipboardItem *item)
 {
     int rows = rowCount();
+    item->setPreferredFormat();
     beginInsertRows(empty_index, rows, rows);
     m_clipboardList.append(item);
     endInsertRows();
+
     return true;
 }
 
@@ -254,12 +252,6 @@ bool ClipboardModel::move(int pos, int newpos)
     return true;
 }
 
-/**
-@fn  moveItems
-@arg list items to move
-@arg key move items in given direction (Qt::Key_Down, Qt::Key_Up, Qt::Key_End, Qt::Key_Home)
-@return true if some item was moved to the top (item to clipboard), otherwise false
-*/
 bool ClipboardModel::moveItems(QModelIndexList list, int key) {
     qSort(list.begin(),list.end());
     int from, to;
