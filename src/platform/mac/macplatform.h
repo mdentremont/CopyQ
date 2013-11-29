@@ -61,6 +61,9 @@ public:
     bool canAutostart() { return false; }
     bool isAutostartEnabled() { return false; }
     void setAutostartEnabled(bool) {}
+
+private:
+    static void *m_currentPasteWindow;
 };
 
 #endif // MACPLATFORM_H
