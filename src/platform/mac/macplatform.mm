@@ -19,6 +19,8 @@
 
 #include "macplatform.h"
 
+#include <common/common.h>
+
 #include <Cocoa/Cocoa.h>
 
 #include <QApplication>
@@ -28,17 +30,33 @@
 void * MacPlatform::m_currentPasteWindow = 0;
 
 namespace {
+    template<typename T> inline T* objc_cast(id from) {
+        if ([from isKindOfClass:[T class]]) {
+            return static_cast<T*>(from);
+        }
+        return nil;
+    }
+
     void raisePasteWindow(WId wid)
     {
-        qWarning() << "!! RAISE PASTE WINDOW:" << wid;
+        ::log(QString("!! RAISE PASTE WINDOW: %1").arg(wid), LogNote);
+
         if (wid == 0L)
             return;
 
-        [NSApp activateIgnoringOtherApps:YES];
-
-        NSRunningApplication *runningApplication = reinterpret_cast<NSRunningApplication *>(wid);
-        [runningApplication unhide];
-        [runningApplication activateWithOptions:NSApplicationActivateAllWindows];
+        NSRunningApplication *runningApplication = objc_cast<NSRunningApplication>((id) wid);
+        NSView *view = objc_cast<NSView>((id) wid);
+        //[NSApp activateIgnoringOtherApps:YES];
+        if (runningApplication) {
+            [runningApplication unhide];
+            [runningApplication activateWithOptions:NSApplicationActivateAllWindows];
+        } else if (view) {
+            ::log("got a view...", LogNote);
+        } else if (wid) {
+            ::log("wid is non-null...", LogNote);
+        } else {
+            ::log("wid is null...", LogNote);
+        }
     }
 } // namespace
 
@@ -65,8 +83,6 @@ WId MacPlatform::getCurrentWindow()
         qWarning() << "!!@^@^@^^@^@^@^^@^@^ASJDIAJDLSAJDALDJLJL:KJS";
 
     WId wid = reinterpret_cast<WId>(runningApp);
-
-    qWarning() << "!! CURRENT WINDOW:" << wid;
 
     return wid;
 
@@ -113,18 +129,20 @@ void MacPlatform::raiseWindow(WId wid)
     if (wid == 0L)
         return;
 
+    NSView *view = objc_cast<NSView>((id)wid);
     if (((WId) m_currentPasteWindow) == wid) {
-//        NSRunningApplication *runningApplication = reinterpret_cast<NSRunningApplication *>(wid);
-//        [runningApplication unhide];
-//        [runningApplication activateWithOptions:NSApplicationActivateAllWindows];
+        ::log(QString("wid is paste window: %1").arg(wid), LogNote);
         raisePasteWindow((WId) wid);
-    } else {
+    } else if (view) {
+        ::log(QString("wid is CopyQ: %1").arg(wid), LogNote);
         [NSApp activateIgnoringOtherApps:YES];
 
-        NSWindow *window = [reinterpret_cast<NSView *>(wid) window];
+        NSWindow *window = [view window];
         [window makeKeyAndOrderFront:nil];
     }
 }
+
+
 
 void MacPlatform::pasteToWindow(WId wid)
 {
@@ -165,8 +183,31 @@ void MacPlatform::pasteToWindow(WId wid)
 
 WId MacPlatform::getPasteWindow()
 {
-    m_currentPasteWindow = (void *) getCurrentWindow();
+    WId current = getCurrentWindow();
+    if (((WId) m_currentPasteWindow) != current) {
+        if (m_currentPasteWindow) {
+            NSObject *obj = objc_cast<NSObject>((id)m_currentPasteWindow);
+            if (obj) {
+                [obj release];
+            } else {
+                ::log("Unable to release paste window for some reason!", LogWarning);
+            }
+        }
+
+        if (current) {
+            NSObject *newObj = objc_cast<NSObject>((id)current);
+            if (newObj) {
+                [newObj retain];
+            } else {
+                ::log("Unable to retain paste window for some reason!", LogWarning);
+            }
+        }
+    }
+
+    m_currentPasteWindow = (void *) current;
+
     qWarning() << "!! GET PASTE WINDOW:" << (WId) m_currentPasteWindow;
+
     return (WId) m_currentPasteWindow;
 }
 
