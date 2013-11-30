@@ -127,7 +127,26 @@ SOURCES += \
     scriptable/scriptableworker.cpp \
     gui/iconfont.cpp
 
-QT += core gui xml network script
+macx {
+    # Only Intel binaries are accepted so force this
+    CONFIG += x86
+
+    # Minimum OS X version for submission is 10.6.6
+    QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.6
+
+    # Copy the custom Info.plist to the app bundle
+    QMAKE_INFO_PLIST = ../shared/Info.plist
+
+    # Icon is mandatory for submission
+    ICON = images/icon.icns
+
+    # Add plugins to the app bundle
+    COPYQ_PLUGINS.files = $$files(../plugins/*.dylib)
+    COPYQ_PLUGINS.path = Contents/Resources/plugins/
+    QMAKE_BUNDLE_DATA += COPYQ_PLUGINS
+}
+
+QT += core gui xml network script svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG(debug, debug|release) {

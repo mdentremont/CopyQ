@@ -54,13 +54,19 @@ bool findPluginDir(QDir *pluginsDir)
             return false;
         }
     }
+
 #elif defined(Q_OS_MAC)
     pluginsDir->setPath( QCoreApplication::instance()->applicationDirPath() );
     if ( pluginsDir->dirName() == "MacOS"
-         && (!pluginsDir->cdUp() || !pluginsDir->cdUp() || !pluginsDir->cdUp()) )
+            && pluginsDir->cdUp()
+            && pluginsDir->cd("Resources")
+            && pluginsDir->cd("plugins"))
     {
+        // OK, found it in the bundle
+    } else {
         return false;
     }
+
 #else
     pluginsDir->setPath( QCoreApplication::instance()->applicationDirPath() );
     if ( !pluginsDir->cd("plugins") )

@@ -30,6 +30,10 @@
 #include <QFile>
 #include <QScriptEngine>
 
+#ifdef Q_OS_MAC
+#  include "platform/mac/macactivity.h"
+#endif
+
 #ifdef HAS_TESTS
 #  include "tests/tests.h"
 #  include <QTest>
@@ -69,6 +73,9 @@ void evaluate(const QString &functionName, const char *arg)
 
 int startServer(int argc, char *argv[], const QString &sessionName)
 {
+#ifdef Q_OS_MAC
+    MacActivity activity(MacActivity::Background, "CopyQ Server");
+#endif
     ClipboardServer app(argc, argv, sessionName);
     if ( app.isListening() ) {
         return app.exec();
@@ -80,22 +87,21 @@ int startServer(int argc, char *argv[], const QString &sessionName)
 
 int startMonitor(int argc, char *argv[])
 {
+#ifdef Q_OS_MAC
+    MacActivity activity(MacActivity::Background, "CopyQ clipboard monitor");
+#endif
     ClipboardMonitor app(argc, argv);
     return app.isConnected() ? app.exec() : 0;
 }
 
 int startClient(int argc, char *argv[], int skipArgc, const QString &sessionName)
 {
+#ifdef Q_OS_MAC
+    MacActivity activity(MacActivity::User, "CopyQ Client");
+#endif
     ClipboardClient app(argc, argv, skipArgc, sessionName);
     return app.exec();
 }
-
-#ifdef HAS_TESTS
-int startTests(int argc, char *argv[])
-{
-    return tests::main(argc, argv);
-}
-#endif
 
 bool needsHelp(const QByteArray &arg)
 {
@@ -173,7 +179,7 @@ int main(int argc, char *argv[])
 #ifdef HAS_TESTS
         } else if ( needsTests(arg) ) {
             // Skip the "tests" argument and pass the rest to tests.
-            return startTests(argc - 1, argv + 1);
+            return tests::main(argc - 1, argv + 1);
 #endif
         }
     }

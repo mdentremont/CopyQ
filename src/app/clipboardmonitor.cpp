@@ -34,6 +34,11 @@
 #  include "platform/x11/x11platform.h"
 #endif
 
+#ifdef Q_OS_MAC
+#  include "platform/mac/macplatform.h"
+#  include "platform/mac/mactimer.h"
+#endif
+
 namespace {
 
 void setClipboardData(const QVariantMap &data, QClipboard::Mode mode)
@@ -250,6 +255,11 @@ ClipboardMonitor::ClipboardMonitor(int &argc, char **argv)
     , m_needCheckSelection(false)
     , m_x11(new PrivateX11)
 #endif
+#ifdef Q_OS_MAC
+    , m_prevChangeCount(0)
+    , m_clipboardCheckTimer(new MacTimer(this))
+    , m_macPlatform(new MacPlatform())
+#endif
 {
     connect( m_socket, SIGNAL(readyRead()),
              this, SLOT(readyRead()) );
@@ -277,12 +287,22 @@ ClipboardMonitor::ClipboardMonitor(int &argc, char **argv)
     connect( &m_x11->resetClipboardTimer(), SIGNAL(timeout()),
              this, SLOT(resetClipboard()) );
 #endif
+
+#ifdef Q_OS_MAC
+    m_clipboardCheckTimer->setInterval(250);
+    m_clipboardCheckTimer->setTolerance(500);
+    connect(m_clipboardCheckTimer, SIGNAL(timeout()), this, SLOT(clipboardTimeout()));
+    m_clipboardCheckTimer->start();
+#endif
 }
 
 ClipboardMonitor::~ClipboardMonitor()
 {
 #ifdef COPYQ_WS_X11
     delete m_x11;
+#endif
+#ifdef Q_OS_MAC
+    delete m_macPlatform;
 #endif
 }
 
@@ -461,6 +481,16 @@ void ClipboardMonitor::readyRead()
     m_socket->blockSignals(false);
 }
 
+void ClipboardMonitor::clipboardTimeout() {
+#ifdef Q_OS_MAC
+    long int newCount = m_macPlatform->getChangeCount();
+    if (newCount != m_prevChangeCount) {
+        m_prevChangeCount = newCount;
+        checkClipboard(QClipboard::Clipboard);
+    }
+#endif
+}
+
 void ClipboardMonitor::onDisconnected()
 {
     exit(0);
@@ -500,7 +530,7 @@ void ClipboardMonitor::exit(int exitCode)
 void ClipboardMonitor::writeMessage(const QByteArray &msg)
 {
     if ( !::writeMessage(m_socket, msg) ) {
-        log( "Failed to send data to server!", LogError );
+        ::log( "Failed to send data to server!", LogError );
         exit(1);
     }
 }
